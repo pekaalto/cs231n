@@ -135,6 +135,13 @@ class CaptioningRNN(object):
         # gradients for self.params[k].                                            #
         ############################################################################
 
+        if self.cell_type == "rnn":
+            forward = rnn_forward
+            backward = rnn_backward
+        else:
+            forward = lstm_forward
+            backward = lstm_backward
+
         # 1)
         h0, h0_cache = affine_forward(features, W_proj, b_proj)
 
@@ -142,10 +149,8 @@ class CaptioningRNN(object):
         captions_vec_in, word_embed_cache = word_embedding_forward(captions_in, W_embed)
 
         # 3)
-        if self.cell_type == "rnn":
-            h, cache_rnn = rnn_forward(captions_vec_in, h0, Wx, Wh, b)
-        else:
-            raise NotImplementedError
+        forward = rnn_forward if self.cell_type == "rnn" else lstm_forward
+        h, cache_rnn = forward(captions_vec_in, h0, Wx, Wh, b)
 
         # 4)
         out, cache_out = temporal_affine_forward(h, W_vocab, b_vocab)
@@ -155,7 +160,7 @@ class CaptioningRNN(object):
 
         # backwards
         dh, grads["W_vocab"], grads["b_vocab"] = temporal_affine_backward(dout, cache_out)
-        dx, dh0, grads["Wx"], grads["Wh"], grads["b"] = rnn_backward(dh, cache_rnn)
+        dx, dh0, grads["Wx"], grads["Wh"], grads["b"] = backward(dh, cache_rnn)
         grads["W_embed"] = word_embedding_backward(dx, word_embed_cache)
         _, grads["W_proj"], grads["b_proj"] = affine_backward(dh0, h0_cache)
 
@@ -219,8 +224,13 @@ class CaptioningRNN(object):
         # functions; you'll need to call rnn_step_forward or lstm_step_forward in #
         # a loop.                                                                 #
         ###########################################################################
-        hidden, _ = affine_forward(features, W_proj, b_proj) #N, H
+        hidden, _ = affine_forward(features, W_proj, b_proj)  # N, H
         current_word = np.ones(N, "int32") * self._start
+
+        if self.cell_type == "lstm":
+            c = np.zeros_like(features)
+        else:
+            c = None  # make editor happy
 
         def softmax(scores):
             probs = np.exp(scores - np.max(scores, axis=1, keepdims=True))
@@ -230,11 +240,15 @@ class CaptioningRNN(object):
         for i in range(1, max_length):
             captions[:, i] = current_word
             current_word_embedding = W_embed[current_word]
-            hidden, _ = rnn_step_forward(current_word_embedding, hidden, Wx, Wh, b)
-            scores, _ = affine_forward(hidden, W_vocab, b_vocab)
-            #probs = softmax(scores)
-            current_word = scores.argmax(axis = 1)
+            if self.cell_type == "rnn":
+                hidden, _ = rnn_step_forward(current_word_embedding, hidden, Wx, Wh, b)
+            else:
+                hidden, c, _ = lstm_step_forward(current_word_embedding, hidden, c, Wx, Wh, b)
 
+            scores, _ = affine_forward(hidden, W_vocab, b_vocab)
+            # no sampling.. just do argmax
+            # probs = softmax(scores)
+            current_word = scores.argmax(axis=1)
         ############################################################################
         #                             END OF YOUR CODE                             #
         ############################################################################

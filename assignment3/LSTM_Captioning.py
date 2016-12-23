@@ -147,9 +147,11 @@ print 'dWh error: ', rel_error(dWh_num, dWh)
 print 'db error: ', rel_error(db_num, db)
 
 # # LSTM: forward
-# In the function `lstm_forward` in the file `cs231n/rnn_layers.py`, implement the `lstm_forward` function to run an LSTM forward on an entire timeseries of data.
+# In the function `lstm_forward` in the file `cs231n/rnn_layers.py`,
+# implement the `lstm_forward` function to run an LSTM forward on an entire timeseries of data.
 # 
-# When you are done run the following to check your implementation. You should see an error around `1e-7`.
+# When you are done run the following to check your implementation.
+# You should see an error around `1e-7`.
 
 # In[ ]:
 
@@ -173,7 +175,10 @@ expected_h = np.asarray([
 print 'h error: ', rel_error(expected_h, h)
 
 # # LSTM: backward
-# Implement the backward pass for an LSTM over an entire timeseries of data in the function `lstm_backward` in the file `cs231n/rnn_layers.py`. When you are done run the following to perform numeric gradient checking on your implementation. You should see errors around `1e-8` or less.
+# Implement the backward pass for an LSTM over an entire timeseries of data
+# in the function `lstm_backward` in the file `cs231n/rnn_layers.py`.
+# When you are done run the following to perform numeric gradient checking on your implementation.
+# You should see errors around `1e-8` or less.
 
 # In[ ]:
 
@@ -206,15 +211,20 @@ dWh_num = eval_numerical_gradient_array(fWh, Wh, dout)
 db_num = eval_numerical_gradient_array(fb, b, dout)
 
 print 'dx error: ', rel_error(dx_num, dx)
-print 'dh0 error: ', rel_error(dx_num, dx)
-print 'dWx error: ', rel_error(dx_num, dx)
-print 'dWh error: ', rel_error(dx_num, dx)
-print 'db error: ', rel_error(dx_num, dx)
+print 'dh0 error: ', rel_error(dh0_num, dh0)
+print 'dWx error: ', rel_error(dWx_num, dWx)
+print 'dWh error: ', rel_error(dWh_num, dWh)
+print 'db error: ', rel_error(db_num, db)
+
 
 # #LSTM captioning model
-# Now that you have implemented an LSTM, update the implementation of the `loss` method of the `CaptioningRNN` class in the file `cs231n/classifiers/rnn.py` to handle the case where `self.cell_type` is `lstm`. This should require adding less than 10 lines of code.
+# Now that you have implemented an LSTM, update the implementation of the `loss` method of the
+# `CaptioningRNN` class in the file `cs231n/classifiers/rnn.py`
+# to handle the case where `self.cell_type` is `lstm`.
+# This should require adding less than 10 lines of code.
 # 
-# Once you have done so, run the following to check your implementation. You should see a difference of less than `1e-10`.
+# Once you have done so, run the following to check your implementation.
+# You should see a difference of less than `1e-10`.
 
 # In[ ]:
 
@@ -281,9 +291,11 @@ plt.title('Training loss history')
 plt.show()
 
 # # LSTM test-time sampling
-# Modify the `sample` method of the `CaptioningRNN` class to handle the case where `self.cell_type` is `lstm`. This should take fewer than 10 lines of code.
+# Modify the `sample` method of the `CaptioningRNN` class to handle the case where `self.cell_type`
+# is `lstm`. This should take fewer than 10 lines of code.
 # 
-# When you are done run the following to sample from your overfit LSTM model on some training and validation set samples.
+# When you are done run the following to sample from your overfit LSTM model on
+# some training and validation set samples.
 
 # In[ ]:
 
@@ -302,9 +314,14 @@ for split in ['train', 'val']:
         plt.show()
 
 # # Train a good captioning model!
-# Using the pieces you have implemented in this and the previous notebook, try to train a captioning model that gives decent qualitative results (better than the random garbage you saw with the overfit models) when sampling on the validation set. You can subsample the training set if you want; we just want to see samples on the validatation set that are better than random.
+# Using the pieces you have implemented in this and the previous notebook,
+# try to train a captioning model that gives decent qualitative results
+# (better than the random garbage you saw with the overfit models) when sampling on the validation set.
+# You can subsample the training set if you want; we just want to see samples on the validatation
+# set that are better than random.
 # 
-# Don't spend too much time on this part; we don't have any explicit accuracy thresholds you need to meet.
+# Don't spend too much time on this part;
+# we don't have any explicit accuracy thresholds you need to meet.
 
 # In[ ]:
 
