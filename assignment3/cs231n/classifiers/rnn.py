@@ -149,7 +149,6 @@ class CaptioningRNN(object):
         captions_vec_in, word_embed_cache = word_embedding_forward(captions_in, W_embed)
 
         # 3)
-        forward = rnn_forward if self.cell_type == "rnn" else lstm_forward
         h, cache_rnn = forward(captions_vec_in, h0, Wx, Wh, b)
 
         # 4)

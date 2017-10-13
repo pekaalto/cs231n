@@ -372,8 +372,8 @@ def lstm_forward(x, h0, Wx, Wh, b):
     cache = []
 
     for x_current in x.transpose([1, 0, 2]):
-        h_current, c_current, cache_current = lstm_step_forward(x_current, h_current, c_current, Wx,
-            Wh, b)
+        h_current, c_current, cache_current = lstm_step_forward(
+            x_current, h_current, c_current, Wx, Wh, b)
         hlist.append(h_current)
         cache.append(cache_current)
 
